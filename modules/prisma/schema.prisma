@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id
+
+  userName        String           @unique
+  emailHash       String           @unique
+  passwordHash    String
+  roles           String[]
+  createdAt       DateTime
+  updatedAt       DateTime
+  verifiedAt      DateTime?
+  disabledAt      DateTime?
+  invitationCodes InvitationCode[] @relation("invitationCodes")
+}
+
+model InvitationCode {
+  id      String    @id
+  owner   User      @relation(fields: [ownerId], references: [id], name: "invitationCodes")
+  ownerId String
+  code    String    @unique
+  usedAt  DateTime?
+}
